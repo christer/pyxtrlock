@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import pickle
-
 fg_bitmap = bytes([
     0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0xf8, 0xff, 0x7f, 0x00, 0xe0, 0xff,
     0x3f, 0x00, 0xc0, 0xff, 0x1f, 0x00, 0x80, 0xff, 0x0f, 0xfc, 0x03, 0xff,
@@ -36,15 +34,14 @@ bg_bitmap = bytes([
     0xff, 0xff, 0xff, 0x0f
 ])
 
-with open("lock.pickle", "wb") as f:
-    pickle.dump({
-        "width": 28,
-        "height": 40,
-        "x_hot": 14,
-        "y_hot": 21,
-        "fg_bitmap": fg_bitmap,
-        "bg_bitmap": bg_bitmap,
-        "color_mode": "named",
-        "bg_color": "steelblue3",
-        "fg_color": "grey25"
-    }, f)
+DEFAULT_CURSOR = {
+    "width": 28,
+    "height": 40,
+    "x_hot": 14,
+    "y_hot": 21,
+    "fg_bitmap": fg_bitmap,
+    "bg_bitmap": bg_bitmap,
+    "color_mode": "named",
+    "bg_color": "steelblue3",
+    "fg_color": "grey25"
+}
