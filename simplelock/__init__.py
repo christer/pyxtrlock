@@ -1,16 +1,16 @@
-#!/usr/bin/env python3
 # emacs this is -*-python-*-
 
-from ctypes import POINTER, c_int, c_uint32, c_char
-from ctypes import byref, cast
-import getpass
-import os
 from . import X
 from . import xcb
+from ctypes import POINTER, c_int, c_uint32, c_char
+from ctypes import byref, cast
+from passlib.apps import custom_app_context as pwd_context
+import argparse
+import getpass
+import os
 import sys
 import time
 
-data_dir = os.path.join(sys.prefix, "share/pyxtrlock")
 # pwd length limit to prevent memory exhaustion (and therefore
 # possible failure due to OOM killing)
 PWD_LENGTH_LIMIT = 100 * 1024
@@ -21,6 +21,8 @@ MAXGOODWILL = TIMEOUTPERATTEMPT * 5
 INITIALGOODWILL = MAXGOODWILL
 GOODWILLPORTION = 0.3
 
+
+# Invisible mouse pointer
 EMPTY_CURSOR = {
     "width": 1,
     "height": 1,
@@ -35,6 +37,10 @@ EMPTY_CURSOR = {
 
 UNCHANGED_CURSOR = None
 
+XDG_CONFIG_HOME = os.environ.get('XDG_CONFIG_HOME') or \
+                    os.path.expanduser('~/.config')
+PASSWD_FILE = os.path.join(XDG_CONFIG_HOME, 'simplelock/passwd')
+
 def panic(message, exit_code=1):
     """Print an error message to stderr and exit"""
     print(message, file=sys.stderr)
@@ -42,8 +48,10 @@ def panic(message, exit_code=1):
 
 
 def authenticate(passwd: bytes):
-    return passwd == b'abc123'  # TODO pass in config
-
+    with open('PASSWD_FILE') as inp:
+        hash = inp.read()
+    ok = pwd_context.verify(passwd.decode('UTF8'), hash)
+    return ok
 
 
 def event_loop(display, conn, ic):
@@ -143,14 +151,7 @@ def create_cursor(conn, window, screen, cursor):
     except xcb.XCBError:
         panic("pyxtrlock: Could not create cursor")
 
-def main():
-    if getpass.getuser() == 'root' and sys.argv[1:] != ['-f']:
-        msg = (
-            "pyxtrlock: refusing to run as root. Use -f to force."
-        )
-        panic(msg)
-
-
+def lock_screen():
     display = X.create_window(None)
     conn = X.get_xcb_connection(display)
 
@@ -238,3 +239,31 @@ def main():
     event_loop(display, conn, ic)
 
     X.close_window(display)
+
+def main():
+
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('-f', '--force', action='store_true',
+                        help='Force locking even for root user')
+    parser.add_argument('-p', '--passwd', action='store_true',
+                        help='Set/change the password')
+    args = parser.parse_args()
+
+    if args.passwd:
+        pass1 = getpass.getpass('new password: ')
+        pass2 = getpass.getpass('confirm new password: ')
+        if pass1 != pass2:
+            panic('Passwords didn\'t match')
+        else:
+            hash = pwd_context.encrypt(pass1)
+            if not os.path.exists(os.path.dirname(PASSWD_FILE)):
+                os.makedirs(os.path.dirname(PASSWD_FILE))
+            with open(PASSWD_FILE, 'w', encoding='ASCII') as out:
+                out.write(hash)
+            exit(0)
+    else:
+        if getpass.getuser() == 'root' and not args.force:
+            panic("pyxtrlock: refusing to run as root. Use -f to force.")
+        if not os.path.exists(PASSWD_FILE):
+            panic("pyxtrlock: refusing to run, no password has been set.")
+        lock_screen()

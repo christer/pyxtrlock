@@ -73,7 +73,8 @@ Please report any new bugs you may find to our
 
 Configuration
 -------------
-TODO ``~/.config/pyxtrlock/lock.pickle`` takes precedence if present.
+
+Password is set with ``simplelock --passwd``
 
 Requirements
 ------------
