@@ -26,8 +26,8 @@ EMPTY_CURSOR = {
     "height": 1,
     "x_hot": 1,
     "y_hot": 1,
-    "fg_bitmap": bytes([0x00],
-    "bg_bitmap": bytes([0x00],
+    "fg_bitmap": bytes([0x00]),
+    "bg_bitmap": bytes([0x00]),
     "color_mode": "named",
     "bg_color": "steelblue3",
     "fg_color": "grey25"
@@ -181,7 +181,7 @@ def main():
 
     cursor_data = EMPTY_CURSOR
 
-    cursor = create_cursor(conn, window, screen, cursor)
+    cursor = create_cursor(conn, window, screen, cursor_data)
 
     # map window
     xcb.map_window(conn, window)

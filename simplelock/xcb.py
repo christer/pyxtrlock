@@ -1,5 +1,5 @@
 from ctypes import *
-from pyxtrlock.utils import check_and_load_library
+from . import utils
 
 class XCBError(Exception):
     """
@@ -213,9 +213,9 @@ WINDOW_NONE = 0
 
 KEY_PRESS = 2
 
-libxcb = check_and_load_library('xcb')
-libxcb_image = check_and_load_library('xcb-image')
-libc = check_and_load_library('c')
+libxcb = utils.check_and_load_library('xcb')
+libxcb_image = utils.check_and_load_library('xcb-image')
+libc = utils.check_and_load_library('c')
 
 connect = libxcb.xcb_connect
 connect.argtypes = [c_char_p, POINTER(c_int)]

@@ -1,10 +1,9 @@
 from ctypes import *
-from pyxtrlock.utils import check_and_load_library
+from . import utils
+from . import xcb
 
-import pyxtrlock.xcb as xcb
-
-libx_xcb = check_and_load_library('X11-xcb')
-libx = check_and_load_library('X11')
+libx_xcb = utils.check_and_load_library('X11-xcb')
+libx = utils.check_and_load_library('X11')
 
 
 class Display(Structure):
