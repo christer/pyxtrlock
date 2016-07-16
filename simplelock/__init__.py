@@ -7,7 +7,6 @@ import getpass
 import os
 from . import X
 from . import xcb
-from . import lock_cursor
 import sys
 import time
 
@@ -22,6 +21,19 @@ MAXGOODWILL = TIMEOUTPERATTEMPT * 5
 INITIALGOODWILL = MAXGOODWILL
 GOODWILLPORTION = 0.3
 
+EMPTY_CURSOR = {
+    "width": 1,
+    "height": 1,
+    "x_hot": 1,
+    "y_hot": 1,
+    "fg_bitmap": bytes([0x00],
+    "bg_bitmap": bytes([0x00],
+    "color_mode": "named",
+    "bg_color": "steelblue3",
+    "fg_color": "grey25"
+}
+
+UNCHANGED_CURSOR = None
 
 def panic(message, exit_code=1):
     """Print an error message to stderr and exit"""
@@ -31,6 +43,7 @@ def panic(message, exit_code=1):
 
 def authenticate(passwd: bytes):
     return passwd == b'abc123'  # TODO pass in config
+
 
 
 def event_loop(display, conn, ic):
@@ -166,7 +179,9 @@ def main():
                             xcb.CW_OVERRIDE_REDIRECT | xcb.CW_EVENT_MASK,
                             cast(byref(attribs), POINTER(c_uint32)))
 
-    cursor = create_cursor(conn, window, screen, lock_cursor.DEFAULT_CURSOR)
+    cursor_data = EMPTY_CURSOR
+
+    cursor = create_cursor(conn, window, screen, cursor)
 
     # map window
     xcb.map_window(conn, window)
