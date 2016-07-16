@@ -10,18 +10,14 @@ authors = (
 )
 
 desc = (
-    'The X transparent screen lock rewritten in Python, using XCB and PAM.'
+    'Extremely lightweigt xorg locker.'
 )
 
 long_desc = """
-pyxtrlock -- The leightweight screen locker rewritten in Python
----------------------------------------------------------------
+simplelock -- The extremely lightweight xorg locker written in Python
+----------------------------------------------------------------------
 
-pyxtrlock is a very limited transparent X screen locker inspired by Ian
-Jackson’s great xtrlock program. pyxtrlock uses modern libraries, most
-importantly the obsolete direct passwd/shadow authentication has been replaced
-by today’s PAM authentication mechanism, hence it also works on Fedora. Also,
-it’s mostly written using XCB instead of Xlib.
+simplelock is a very limited transparent xorg keyboard/mouse locker based on pyxtrlock.
 
 """
 
@@ -36,20 +32,20 @@ classifiers = [
     'Topic :: Desktop Environment :: Screen Savers'
 ]
 
-setup(name='pyxtrlock',
-      version='0.2',
+setup(name='simplelock',
+      version='1.0',
       author=authors,
-      author_email='leon@leonweber.de',
+      author_email='hcs@furuvik.net',
       requires=[],
-      packages=['pyxtrlock'],
+      packages=['simplelock'],
       license='GPLv3+',
-      url='https://zombofant.net/hacking/pyxtrlock',
+      url='https://github.com/christer/simplelock',
       description=desc,
       long_description=long_desc,
       classifiers=classifiers,
       entry_points={
           'console_scripts': [
-              'pyxtrlock=pyxtrlock:main',
+              'simplelock=simplelock:main',
           ],
       },
 )

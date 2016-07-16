@@ -223,6 +223,3 @@ def main():
     event_loop(display, conn, ic)
 
     X.close_window(display)
-
-if __name__ == '__main__':
-    main()
