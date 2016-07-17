@@ -1,21 +1,8 @@
-from distutils.core import setup
-from distutils.command.install import install
+#!/usr/bin/env python3
+# Always prefer setuptools over distutils
+from setuptools import setup
+# To use a consistent encoding
 
-import os
-import stat
-import subprocess
-
-class my_install(install):
-    def run(self):
-        stat_make_lock = os.stat("make_default_lock.py")
-        try:
-            stat_lock = os.stat("lock.pickle")
-        except OSError:
-            stat_lock = None
-        if stat_lock is None \
-                or stat_lock[stat.ST_MTIME] < stat_make_lock[stat.ST_MTIME]:
-            subprocess.call(["python3", "./make_default_lock.py"])
-        super().run()
 
 authors = (
     'Leon Weber <leon@leonweber.de>, '
@@ -23,18 +10,14 @@ authors = (
 )
 
 desc = (
-    'The X transparent screen lock rewritten in Python, using XCB and PAM.'
+    'Extremely lightweigt xorg locker.'
 )
 
 long_desc = """
-pyxtrlock -- The leightweight screen locker rewritten in Python
----------------------------------------------------------------
+simplelock -- The extremely lightweight xorg locker written in Python
+----------------------------------------------------------------------
 
-pyxtrlock is a very limited transparent X screen locker inspired by Ian
-Jackson’s great xtrlock program. pyxtrlock uses modern libraries, most
-importantly the obsolete direct passwd/shadow authentication has been replaced
-by today’s PAM authentication mechanism, hence it also works on Fedora. Also,
-it’s mostly written using XCB instead of Xlib.
+simplelock is a very limited transparent xorg keyboard/mouse locker based on pyxtrlock.
 
 """
 
@@ -49,19 +32,22 @@ classifiers = [
     'Topic :: Desktop Environment :: Screen Savers'
 ]
 
-setup(name='pyxtrlock',
-      version='0.2',
+setup(name='simplelock',
+      version='1.0',
       author=authors,
-      author_email='leon@leonweber.de',
-      requires=['simplepam'],
-      package_dir={'pyxtrlock': 'lib'},
-      data_files=[('share/pyxtrlock/', ['lock.pickle'])],
-      packages=['pyxtrlock'],
-      scripts=['pyxtrlock'],
-      cmdclass={'install': my_install},
+      author_email='hcs@furuvik.net',
+      install_requires=[
+          'passlib>=1.6.1',
+      ],
+      packages=['simplelock'],
       license='GPLv3+',
-      url='https://zombofant.net/hacking/pyxtrlock',
+      url='https://github.com/christer/simplelock',
       description=desc,
       long_description=long_desc,
-      classifiers=classifiers
+      classifiers=classifiers,
+      entry_points={
+          'console_scripts': [
+              'simplelock=simplelock:main',
+          ],
+      },
 )
