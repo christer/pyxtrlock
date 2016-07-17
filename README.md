@@ -1,7 +1,5 @@
 simplelock
 ==========
-TODO: optionally hidden pointer
-
 Minimal xorg screen locker except it doesn't touch the screen so it is
 more correctly describes as a xorg input locker.
 
@@ -34,14 +32,21 @@ expired after too many attempts have been made in too short time.
 
 Installation and Usage
 ----------------------
+Easiest way to install is using pip
 
-Clone and install simplelock:
+    $ pip3 install https://github.com/christer/simplelock/archive/devel.zip
+
+Clone and install from source simplelock:
 
     $ git clone git://github.com/christer/simplelock.git
     $ cd simplelock
     $ sudo python3 setup.py install
 
-Once this is done, you should be able to simply lock your display by running
+Once this is done, you need to set your password:
+
+    $ simplelock -p
+
+Then you should be able to simply lock your display by running:
 
     $ simplelock
 

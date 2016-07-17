@@ -151,7 +151,7 @@ def create_cursor(conn, window, screen, cursor):
     except xcb.XCBError:
         panic("pyxtrlock: Could not create cursor")
 
-def lock_screen():
+def lock_screen(hide_cursor: bool):
     display = X.create_window(None)
     conn = X.get_xcb_connection(display)
 
@@ -180,9 +180,10 @@ def lock_screen():
                             xcb.CW_OVERRIDE_REDIRECT | xcb.CW_EVENT_MASK,
                             cast(byref(attribs), POINTER(c_uint32)))
 
-    cursor_data = EMPTY_CURSOR
-
-    cursor = create_cursor(conn, window, screen, cursor_data)
+    if hide_cursor:
+        cursor = create_cursor(conn, window, screen, EMPTY_CURSOR)
+    else:
+        cursor = 0  # keep mouse pointer as it is
 
     # map window
     xcb.map_window(conn, window)
@@ -247,6 +248,8 @@ def main():
                         help='Force locking even for root user')
     parser.add_argument('-p', '--passwd', action='store_true',
                         help='Set/change the password')
+    parser.add_argument('--no-hide-cursor', action='store_true',
+                        help="Don't hide the mouse pointer.")
     args = parser.parse_args()
 
     if args.passwd:
@@ -266,4 +269,4 @@ def main():
             panic("pyxtrlock: refusing to run as root. Use -f to force.")
         if not os.path.exists(PASSWD_FILE):
             panic("pyxtrlock: refusing to run, no password has been set.")
-        lock_screen()
+        lock_screen(not args.no_hide_cursor)
