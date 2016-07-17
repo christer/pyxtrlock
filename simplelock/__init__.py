@@ -48,7 +48,7 @@ def panic(message, exit_code=1):
 
 
 def authenticate(passwd: bytes):
-    with open('PASSWD_FILE') as inp:
+    with open(PASSWD_FILE) as inp:
         hash = inp.read()
     ok = pwd_context.verify(passwd.decode('UTF8'), hash)
     return ok
