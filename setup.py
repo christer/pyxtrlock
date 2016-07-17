@@ -36,8 +36,8 @@ setup(name='simplelock',
       version='1.0',
       author=authors,
       author_email='hcs@furuvik.net',
-      requires=[
-        'passlib',
+      install_requires=[
+          'passlib>=1.6.1',
       ],
       packages=['simplelock'],
       license='GPLv3+',
